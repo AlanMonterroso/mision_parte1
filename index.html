@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Invitación Secreta </title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Georgia', 'Times New Roman', serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #fff0f3, #ffe6ea);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #c44569;
+            margin-bottom: 25px;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+            font-size: 28px;
+        }
+        
+        /* SOBRE */
+        .envelope {
+            width: 320px;
+            height: 220px;
+            background-color: #e66767;
+            margin: 0 auto 30px;
+            position: relative;
+            border-radius: 12px;
+            cursor: pointer;
+            box-shadow: 0 12px 30px rgba(230, 103, 103, 0.25);
+            transition: transform 0.3s, box-shadow 0.3s;
+            z-index: 10;
+        }
+        
+        .envelope:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(230, 103, 103, 0.35);
+        }
+        
+        .envelope:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            border-width: 110px 160px 0 160px;
+            border-style: solid;
+            border-color: #cf6a6a transparent transparent transparent;
+            z-index: 2;
+        }
+        
+        .envelope:after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #f8a5c2;
+            border-radius: 12px;
+            z-index: 1;
+        }
+        
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 160px solid transparent;
+            border-right: 160px solid transparent;
+            border-top: 110px solid #cf6a6a;
+            border-radius: 12px 12px 0 0;
+            transform-origin: top;
+            transition: transform 0.9s ease;
+            z-index: 3;
+        }
+        
+        .envelope.open .envelope-flap {
+            transform: rotateX(180deg);
+        }
+        
+        .envelope-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 32px;
+            font-weight: bold;
+            z-index: 4;
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.25);
+            letter-spacing: 1px;
+        }
+        
+        /* CARTA */
+        .letter {
+            width: 550px;
+            max-width: 95vw;
+            min-height: 300px;
+            background-color: #fff;
+            margin: -200px auto 30px;
+            padding: 30px 25px;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+            transform: scale(0);
+            transition: transform 0.9s ease, margin 0.9s ease;
+            position: relative;
+            z-index: 5;
+            border: 1px solid #ffeaa7;
+        }
+        
+        .letter.show {
+            transform: scale(1);
+            margin-top: 25px;
+        }
+        
+        /* ROSA EN FRASCO */
+        .jar-container {
+            width: 200px;
+            height: 220px;
+            margin: 0 auto 20px;
+            position: relative;
+            transform: scale(0);
+            transition: transform 1.2s ease;
+            transition-delay: 0.4s;
+        }
+        
+        .letter.show .jar-container {
+            transform: scale(1);
+        }
+        
+        .jar {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 140px;
+            height: 170px;
+            background: linear-gradient(to bottom, rgba(173, 216, 230, 0.15) 0%, rgba(173, 216, 230, 0.25) 100%);
+            border-radius: 10px 10px 45px 45px;
+            border: 3px solid rgba(120, 120, 120, 0.15);
+            overflow: hidden;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.08), 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .water {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 75%;
+            background: linear-gradient(to bottom, rgba(135, 206, 250, 0.5) 0%, rgba(173, 216, 230, 0.7) 30%, rgba(135, 206, 250, 0.8) 100%);
+            border-radius: 0 0 40px 40px;
+        }
+        
+        .rose-clip-path {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 70px;
+            height: 100px;
+            z-index: 2;
+            animation: gentle-sway 5s infinite ease-in-out;
+        }
+        
+        .rose-stem {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 5px;
+            height: 90px;
+            background: linear-gradient(to right, #2b5e25, #367c2e, #2b5e25);
+            border-radius: 3px;
+            box-shadow: 0 0 5px rgba(43, 94, 37, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.3);
+        }
+        
+        .leaf {
+            position: absolute;
+            background: linear-gradient(to bottom, #2b5e25, #3a7c31);
+            border-radius: 50% 0 50% 50%;
+            transform: rotate(45deg);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+        
+        .leaf-1 {
+            width: 18px;
+            height: 18px;
+            top: 50px;
+            left: -8px;
+        }
+        
+        .leaf-2 {
+            width: 16px;
+            height: 16px;
+            top: 70px;
+            right: -10px;
+            transform: rotate(-45deg);
+            border-radius: 0 50% 50% 50%;
+        }
+        
+        .rose-head-clip {
+            position: absolute;
+            top: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 50px;
+        }
+        
+        .petal-clip {
+            position: absolute;
+            background: linear-gradient(to bottom, #e63946, #d32f2f, #b71c1c);
+            border-radius: 50%;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+        
+        .petal-clip-1 { width: 35px; height: 40px; top: 5px; left: 7px; clip-path: path('M 17.5,5 C 20,5 35,15 35,25 C 35,35 20,40 17.5,40 C 15,40 0,35 0,25 C 0,15 15,5 17.5,5 Z'); transform: rotate(0deg); z-index: 3; }
+        .petal-clip-2 { width: 40px; height: 45px; top: 0; left: 5px; clip-path: path('M 20,5 C 25,5 40,18 40,30 C 40,40 25,45 20,45 C 15,45 0,40 0,30 C 0,18 15,5 20,5 Z'); transform: rotate(45deg); z-index: 2; background: linear-gradient(to bottom, #d32f2f, #c2185b, #b71c1c); }
+        .petal-clip-3 { width: 42px; height: 48px; top: -2px; left: 4px; clip-path: path('M 21,5 C 28,5 42,20 42,32 C 42,43 28,48 21,48 C 14,48 0,43 0,32 C 0,20 14,5 21,5 Z'); transform: rotate(90deg); z-index: 1; background: linear-gradient(to bottom, #c2185b, #ad1457, #880e4f); }
+        .petal-clip-4 { width: 40px; height: 45px; top: 2px; left: 5px; clip-path: path('M 20,5 C 25,5 40,18 40,30 C 40,40 25,45 20,45 C 15,45 0,40 0,30 C 0,18 15,5 20,5 Z'); transform: rotate(135deg); z-index: 2; background: linear-gradient(to bottom, #d32f2f, #c2185b, #b71c1c); }
+        .petal-clip-5 { width: 35px; height: 40px; top: 5px; left: 7px; clip-path: path('M 17.5,5 C 20,5 35,15 35,25 C 35,35 20,40 17.5,40 C 15,40 0,35 0,25 C 0,15 15,5 17.5,5 Z'); transform: rotate(180deg); z-index: 3; }
+        
+        .rose-center-clip {
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 18px;
+            height: 18px;
+            background: radial-gradient(circle, #8b0000, #660000);
+            border-radius: 50%;
+            z-index: 4;
+            box-shadow: 0 0 10px rgba(139, 0, 0, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.2);
+        }
+        
+        .jar-lid {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 150px;
+            height: 18px;
+            background: linear-gradient(to bottom, #a68a64, #c8b188, #a68a64);
+            border-radius: 20px;
+            z-index: 2;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2), inset 0 0 10px rgba(255, 255, 255, 0.1);
+        }
+        
+        .jar-reflection {
+            position: absolute;
+            top: 20px;
+            right: 15px;
+            width: 40px;
+            height: 80px;
+            background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.25) 50%, rgba(255, 255, 255, 0) 100%);
+            border-radius: 50%;
+            transform: rotate(20deg);
+            z-index: 1;
+        }
+        
+        .bubble {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            animation: float 4s infinite ease-in-out;
+            box-shadow: 0 0 5px rgba(255, 255, 255, 0.5), inset 0 0 5px rgba(255, 255, 255, 0.8);
+        }
+        
+        .bubble-1 { width: 10px; height: 10px; bottom: 40px; left: 30px; animation-delay: 0s; }
+        .bubble-2 { width: 6px; height: 6px; bottom: 60px; right: 35px; animation-delay: 1.2s; }
+        .bubble-3 { width: 8px; height: 8px; bottom: 85px; left: 50px; animation-delay: 2.5s; }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-25px) scale(1.05); }
+        }
+        
+        @keyframes gentle-sway {
+            0%, 100% { transform: translateX(-50%) rotate(0deg); }
+            50% { transform: translateX(-50%) rotate(0.5deg); }
+        }
+        
+        /* ACERTIJO - SOLO PIZZA */
+        .riddle-section {
+            background: linear-gradient(145deg, #fff9f9, #fff0f0);
+            border-radius: 25px;
+            padding: 25px 20px;
+            margin: 20px 0 15px;
+            border: 2px dashed #e66767;
+            box-shadow: 0 5px 0 rgba(230, 103, 103, 0.2);
+        }
+        
+        .riddle-title {
+            color: #c44569;
+            font-size: 22px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .code-container {
+            background: #2c3e50;
+            padding: 20px;
+            border-radius: 15px;
+            font-family: 'Courier New', monospace;
+            color: #ffd700;
+            font-size: 32px;
+            letter-spacing: 8px;
+            word-break: break-all;
+            margin-bottom: 20px;
+            border: 2px solid #ffd700;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.5);
+            text-shadow: 0 0 8px gold;
+        }
+        
+        .cipher-text {
+            font-size: 36px;
+            font-weight: bold;
+        }
+        
+        .clue-box {
+            background: #fff5e6;
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border-left: 8px solid #e67e22;
+            text-align: left;
+        }
+        
+        .clue-title {
+            color: #e67e22;
+            font-weight: bold;
+            margin-bottom: 8px;
+            font-size: 18px;
+        }
+        
+        .input-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        .answer-input {
+            width: 90%;
+            padding: 15px 20px;
+            font-size: 20px;
+            border: 3px solid #f8a5c2;
+            border-radius: 50px;
+            text-align: center;
+            font-weight: bold;
+            color: #c44569;
+            outline: none;
+            transition: 0.3s;
+            background: white;
+        }
+        
+        .answer-input:focus {
+            border-color: #e66767;
+            box-shadow: 0 0 0 5px rgba(230, 103, 103, 0.2);
+            transform: scale(1.02);
+        }
+        
+        .btn-check {
+            background: linear-gradient(to right, #e66767, #c44569);
+            color: white;
+            border: none;
+            padding: 14px 40px;
+            border-radius: 50px;
+            font-size: 22px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 8px 0 #8e3a4b;
+            transform: translateY(-2px);
+        }
+        
+        .btn-check:hover {
+            transform: translateY(2px);
+            box-shadow: 0 4px 0 #8e3a4b;
+        }
+        
+        .btn-check:active {
+            transform: translateY(6px);
+            box-shadow: 0 2px 0 #8e3a4b;
+        }
+        
+        .btn-check:disabled {
+            opacity: 0.6;
+            cursor: default;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 0 #8e3a4b;
+        }
+        
+        .btn-check:disabled:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 0 #8e3a4b;
+        }
+        
+        .hint-text {
+            color: #7f8c8d;
+            font-style: italic;
+            margin-top: 8px;
+            font-size: 15px;
+        }
+        
+        /* NOTA DE PIZZA */
+        .pizza-note {
+            background: linear-gradient(145deg, #fff9e6, #fff3d6);
+            border: 3px solid #f39c12;
+            border-radius: 25px;
+            padding: 25px;
+            margin: 25px 0 15px;
+            box-shadow: 0 15px 0 rgba(243, 156, 18, 0.1), 0 20px 25px rgba(0,0,0,0.1);
+            transform: scale(0);
+            transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+        }
+        
+        .pizza-note.show {
+            transform: scale(1);
+        }
+        
+        .heart-decoration {
+            position: absolute;
+            top: -15px;
+            right: -15px;
+            background: #e74c3c;
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+            animation: heartbeat 1.5s infinite;
+        }
+        
+        .pizza-icon {
+            font-size: 70px;
+            margin-bottom: 15px;
+            text-shadow: 0 5px 10px rgba(0,0,0,0.1);
+        }
+        
+        .pizza-title {
+            font-size: 42px;
+            font-weight: bold;
+            color: #e67e22;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 0 #ffeaa7;
+        }
+        
+        .pizza-desc {
+            font-size: 22px;
+            line-height: 1.6;
+            color: #2c3e50;
+        }
+        
+        .highlight {
+            background: #f1c40f;
+            color: #2c3e50;
+            padding: 5px 15px;
+            border-radius: 30px;
+            font-weight: bold;
+            display: inline-block;
+            margin: 10px 0;
+        }
+        
+        .success-message {
+            background: #2ecc71;
+            color: white;
+            padding: 18px;
+            border-radius: 50px;
+            font-size: 26px;
+            font-weight: bold;
+            margin: 20px 0;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .final-date {
+            margin-top: 25px;
+            padding: 20px;
+            background: #fce4ec;
+            border-radius: 20px;
+            border: 2px solid #c44569;
+        }
+        
+        /* Mensaje inicial */
+        .message {
+            margin-top: 15px;
+        }
+        
+        .question {
+            font-size: 26px;
+            color: #c44569;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        
+        .countdown {
+            font-size: 20px;
+            color: #555;
+            background-color: #fff0f3;
+            padding: 12px 20px;
+            border-radius: 10px;
+            display: inline-block;
+            margin: 15px 0;
+            border: 1px dashed #e66767;
+        }
+        
+        .heart {
+            color: #e84393;
+            animation: heartbeat 1.5s infinite;
+            display: inline-block;
+        }
+        
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        .buttons {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+        }
+        
+        .btn {
+            padding: 14px 35px;
+            border: none;
+            border-radius: 50px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn-yes {
+            background: linear-gradient(to right, #78e08f, #38ada9);
+            color: white;
+        }
+        
+        .btn-yes:hover {
+            background: linear-gradient(to right, #5dc775, #2a8c87);
+            transform: scale(1.05);
+        }
+        
+        .btn-no {
+            background: linear-gradient(to right, #e15f41, #c44569);
+            color: white;
+        }
+        
+        .btn-no:hover {
+            background: linear-gradient(to right, #d14a2c, #b5345a);
+            transform: scale(1.05);
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .instructions {
+            margin-top: 25px;
+            color: #888;
+            font-style: italic;
+            font-size: 16px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 600px) {
+            .envelope {
+                width: 280px;
+                height: 190px;
+            }
+            .envelope:before {
+                border-width: 95px 140px 0 140px;
+            }
+            .envelope-flap {
+                border-left: 140px solid transparent;
+                border-right: 140px solid transparent;
+                border-top: 95px solid #cf6a6a;
+            }
+            .letter {
+                width: 95%;
+                padding: 20px 15px;
+            }
+            .code-container {
+                font-size: 24px;
+                letter-spacing: 5px;
+            }
+            .cipher-text {
+                font-size: 28px;
+            }
+            .pizza-title {
+                font-size: 32px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-heart heart"></i> Misión: de San Valentín <i class="fas fa-heart heart"></i></h1>
+        
+        <!-- SOBRE -->
+        <div class="envelope" id="envelope">
+            <div class="envelope-flap"></div>
+            <div class="envelope-text">Ábreme</div>
+        </div>
+        
+        <!-- CARTA PRINCIPAL -->
+        <div class="letter" id="letter">
+            <!-- Rosa en frasco -->
+            <div class="jar-container">
+                <div class="jar">
+                    <div class="water">
+                        <div class="bubble bubble-1"></div>
+                        <div class="bubble bubble-2"></div>
+                        <div class="bubble bubble-3"></div>
+                    </div>
+                    <div class="jar-reflection"></div>
+                    <div class="rose-clip-path">
+                        <div class="rose-stem"></div>
+                        <div class="leaf leaf-1"></div>
+                        <div class="leaf leaf-2"></div>
+                        <div class="rose-head-clip">
+                            <div class="petal-clip petal-clip-1"></div>
+                            <div class="petal-clip petal-clip-2"></div>
+                            <div class="petal-clip petal-clip-3"></div>
+                            <div class="petal-clip petal-clip-4"></div>
+                            <div class="petal-clip petal-clip-5"></div>
+                            <div class="rose-center-clip"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="jar-lid"></div>
+            </div>
+            
+            <!-- MENSAJE INICIAL -->
+            <div id="initialMessage">
+                <div class="message">
+                    <div class="question">¿Quieres ser mi San Valentín?</div>
+                    <div class="countdown">Faltan <span id="days">6</span> días <i class="fas fa-heart heart"></i></div>
+                    
+                    <div class="buttons">
+                        <button class="btn btn-yes" id="btnYes">¡Sí!</button>
+                        <button class="btn btn-no" id="btnNo">Tal vez</button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- SECCIÓN DEL ACERTIJO (SOLO PIZZA) -->
+            <div id="riddleArea" class="hidden">
+                <div class="riddle-section">
+                    <div class="riddle-title">
+                        <i class="fas fa-lock" style="color: #c44569;"></i> ¿CUÁL ES NUESTRA CITA? <i class="fas fa-lock" style="color: #c44569;"></i>
+                    </div>
+                    
+                    <!-- Código cifrado - SOLO PIZZA -->
+                    <div class="code-container">
+                        <span class="cipher-text">16-9-26-26-1</span>
+                    </div>
+                    
+                    <!-- Pista -->
+                    <div class="clue-box">
+                        <div class="clue-title"><i class="fas fa-lightbulb"></i> Pista secreta:</div>
+                        <p style="font-size: 18px; margin-bottom: 5px;">🔑 A=1, B=2, C=3 ... Z=26</p>
+                        <p style="color: #e66767; font-weight: bold; margin-top: 8px;">✏️ Escribe la palabra en minúsculas</p>
+                    </div>
+                    
+                    <!-- Área de respuesta -->
+                    <div class="input-area">
+                        <input type="text" id="riddleAnswer" class="answer-input" placeholder="Escribe la palabra aquí..." autocomplete="off">
+                        <button id="checkAnswerBtn" class="btn-check">
+                            <i class="fas fa-check-circle"></i> Descifrar
+                        </button>
+                        <div class="hint-text">
+                            <i class="fas fa-keyboard"></i> Presiona ENTER también funciona
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- NOTA DE PIZZA (aparece al acertar) -->
+                <div id="pizzaNoteContainer" class="hidden">
+                    <div class="pizza-note" id="pizzaNote">
+                        <div class="heart-decoration">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <div class="pizza-icon">
+                            🍕❤️
+                        </div>
+                        <div class="pizza-title">
+                            ¡PIZZA!
+                        </div>
+                        <div class="pizza-desc">
+                            <p style="font-size: 24px; font-weight: bold; color: #e67e22;">¡Descifraste el código! 🎉</p>
+                            <p style="font-size: 22px; margin: 15px 0;">
+                                <span class="highlight">Te invito a comer PIZZA</span>
+                            </p>
+                            <p style="font-size: 20px;">La pizza que tú quieras:</p>
+                            <p style="font-size: 28px; margin: 15px 0;">
+                                🍕 Jamon • Pepperoni • Oria de quezo 🍕
+                            </p>
+                            <p style="font-size: 22px; font-style: italic; color: #c44569;">
+                                "Redonda como la luna,<br>compartir contigo sera una fortuna"
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Mensaje de éxito y fecha -->
+                    <div id="successMessage" class="success-message">
+                        <i class="fas fa-unlock-alt"></i> ¡ACERTIJO RESUELTO!
+                    </div>
+                    
+                    <div id="finalDateMessage" class="final-date">
+                        <p style="font-size: 28px; color: #c44569; font-weight: bold;">💘 14 DE FEBRERO 💘</p>
+                        <p style="font-size: 24px; margin: 15px 0;">¡Te espero para comer PIZZA! 🍕</p>
+                        <p style="font-size: 20px;">Será nuestra cita de San Valentín</p>
+                        <p style="font-size: 30px; margin-top: 15px;">❤️ 🍕 🥂</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="instructions">Haz clic en el sobre para abrir la invitación</div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            'use strict';
+            
+            // ========== ELEMENTOS DEL DOM ==========
+            const envelope = document.getElementById('envelope');
+            const letter = document.getElementById('letter');
+            const btnYes = document.getElementById('btnYes');
+            const btnNo = document.getElementById('btnNo');
+            const daysElement = document.getElementById('days');
+            const initialMessage = document.getElementById('initialMessage');
+            const riddleArea = document.getElementById('riddleArea');
+            const riddleAnswer = document.getElementById('riddleAnswer');
+            const checkBtn = document.getElementById('checkAnswerBtn');
+            const pizzaNoteContainer = document.getElementById('pizzaNoteContainer');
+            const pizzaNote = document.getElementById('pizzaNote');
+            
+            // ========== CALCULAR DÍAS HASTA SAN VALENTÍN ==========
+            const today = new Date();
+            const currentYear = today.getFullYear();
+            let valentinesDay = new Date(currentYear, 1, 14); // 14 Febrero
+            
+            if (today > valentinesDay) {
+                valentinesDay = new Date(currentYear + 1, 1, 14);
+            }
+            
+            const diffTime = valentinesDay - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            daysElement.textContent = diffDays;
+            
+            // ========== ABRIR SOBRE ==========
+            envelope.addEventListener('click', function() {
+                envelope.classList.add('open');
+                setTimeout(function() {
+                    letter.classList.add('show');
+                }, 600);
+            });
+            
+            // ========== BOTÓN SÍ ==========
+            btnYes.addEventListener('click', function() {
+                // Ocultar mensaje inicial
+                initialMessage.classList.add('hidden');
+                // Mostrar acertijo
+                riddleArea.classList.remove('hidden');
+                
+                // Animar rosa
+                makeRoseGlow();
+                
+                // Mensaje gracioso en botón No
+                btnNo.innerHTML = '¡Resuelve el acertijo! 🔍';
+                btnNo.style.position = 'relative';
+                btnNo.style.left = 'auto';
+                btnNo.style.top = 'auto';
+            });
+            
+            // ========== BOTÓN NO (HUYE) ==========
+            btnNo.addEventListener('click', function() {
+                if (!riddleArea.classList.contains('hidden')) {
+                    // Si ya está en el acertijo, que se mueva
+                    const btnNoRect = btnNo.getBoundingClientRect();
+                    const maxX = window.innerWidth - btnNoRect.width - 20;
+                    const maxY = window.innerHeight - btnNoRect.height - 20;
+                    
+                    const randomX = Math.floor(Math.random() * maxX);
+                    const randomY = Math.floor(Math.random() * maxY);
+                    
+                    btnNo.style.position = 'fixed';
+                    btnNo.style.left = randomX + 'px';
+                    btnNo.style.top = randomY + 'px';
+                    btnNo.innerHTML = '¡No te escapes! 🏃‍♀️';
+                    
+                    setTimeout(() => {
+                        btnNo.style.position = 'relative';
+                        btnNo.style.left = 'auto';
+                        btnNo.style.top = 'auto';
+                        btnNo.innerHTML = 'Tal vez';
+                    }, 2000);
+                } else {
+                    // Si no ha dicho sí
+                    alert('💕 Primero dime "SÍ" para descubrir el acertijo 💕');
+                }
+            });
+            
+            // ========== FUNCIÓN PARA VERIFICAR EL ACERTIJO ==========
+            function checkRiddle() {
+                // Obtener respuesta del usuario
+                const userAnswer = riddleAnswer.value.trim().toLowerCase();
+                
+                // RESPUESTAS CORRECTAS (solo pizza)
+                const correctAnswers = [
+                    "pizza",
+                    "16-9-26-26-1",
+                    "pizza pizza",
+                    "la pizza",
+                    "comer pizza",
+                    "pizzaaaa",
+                    "pizzza",
+                    "pisa"
+                ];
+                
+                // Verificar si la respuesta es correcta
+                let isCorrect = false;
+                
+                // 1. Verificar si es exactamente "pizza"
+                if (userAnswer === "pizza" || userAnswer === "16-9-26-26-1") {
+                    isCorrect = true;
+                }
+                
+                // 2. Verificar otras variantes
+                if (!isCorrect) {
+                    for (let i = 0; i < correctAnswers.length; i++) {
+                        if (userAnswer.includes(correctAnswers[i]) || correctAnswers[i].includes(userAnswer)) {
+                            if (userAnswer.length >= 4) { // Evitar falsos positivos muy cortos
+                                isCorrect = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                
+                // 3. Verificar si contiene "pizz"
+                if (!isCorrect && userAnswer.includes("pizz")) {
+                    isCorrect = true;
+                }
+                
+                // ===== SI ES CORRECTO =====
+                if (isCorrect) {
+                    // Mostrar la nota de pizza
+                    pizzaNoteContainer.classList.remove('hidden');
+                    
+                    // Animar la nota de pizza
+                    setTimeout(() => {
+                        pizzaNote.classList.add('show');
+                    }, 200);
+                    
+                    // Efectos visuales
+                    makeRoseGlow();
+                    createPizzaConfetti();
+                    
+                    // Cambiar color del agua a tono pizza
+                    const water = document.querySelector('.water');
+                    water.style.background = 'linear-gradient(to bottom, rgba(255, 193, 7, 0.5), rgba(255, 87, 34, 0.6))';
+                    
+                    // Deshabilitar input y botón
+                    riddleAnswer.disabled = true;
+                    checkBtn.disabled = true;
+                    checkBtn.innerHTML = '<i class="fas fa-check-circle"></i> ¡Descifrado! 🍕';
+                    
+                    // Cambiar estilo del código
+                    const codeContainer = document.querySelector('.code-container');
+                    codeContainer.style.background = '#27ae60';
+                    codeContainer.style.borderColor = '#f1c40f';
+                    codeContainer.style.color = 'white';
+                    
+                    // Mensaje de éxito
+                    alert('🍕 ¡CORRECTO! 🍕 Has descifrado el código. ¡Te espero para comer pizza!');
+                    
+                } else {
+                    // ===== SI ES INCORRECTO =====
+                    // Efecto visual de error
+                    riddleAnswer.style.border = '3px solid #e74c3c';
+                    riddleAnswer.style.backgroundColor = '#fadbd8';
+                    
+                    // Cambiar el hint
+                    const hintText = document.querySelector('.hint-text');
+                    hintText.innerHTML = '<i class="fas fa-exclamation-triangle" style="color: #e74c3c;"></i> No es correcto. Prueba de nuevo: 16-9-26-26-1 = ?';
+                    hintText.style.color = '#e74c3c';
+                    
+                    // Restaurar después de 1 segundo
+                    setTimeout(() => {
+                        riddleAnswer.style.border = '3px solid #f8a5c2';
+                        riddleAnswer.style.backgroundColor = 'white';
+                    }, 1000);
+                    
+                    // Efecto en el frasco
+                    const jar = document.querySelector('.jar');
+                    jar.style.boxShadow = 'inset 0 0 30px rgba(231, 76, 60, 0.5), 0 0 20px rgba(231, 76, 60, 0.5)';
+                    setTimeout(() => {
+                        jar.style.boxShadow = 'inset 0 0 20px rgba(0, 0, 0, 0.08), 0 5px 15px rgba(0, 0, 0, 0.1)';
+                    }, 500);
+                }
+            }
+            
+            // ========== EVENTOS DEL ACERTIJO ==========
+            // Botón Descifrar
+            checkBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                checkRiddle();
+            });
+            
+            // Tecla ENTER en el input
+            riddleAnswer.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    checkRiddle();
+                }
+            });
+            
+            // ========== FUNCIONES DE EFECTOS ==========
+            function makeRoseGlow() {
+                const center = document.querySelector('.rose-center-clip');
+                const petals = document.querySelectorAll('.petal-clip');
+                
+                if (center) {
+                    center.style.boxShadow = '0 0 20px rgba(255, 215, 0, 0.8), inset 0 0 15px rgba(255, 255, 255, 0.4)';
+                    center.style.animation = 'heartbeat 1s infinite';
+                }
+                
+                petals.forEach(petal => {
+                    petal.style.filter = 'drop-shadow(0 0 10px rgba(255, 215, 0, 0.6)) brightness(1.2)';
+                });
+                
+                setTimeout(() => {
+                    if (center) {
+                        center.style.boxShadow = '0 0 10px rgba(139, 0, 0, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.2)';
+                        center.style.animation = '';
+                    }
+                    petals.forEach(petal => {
+                        petal.style.filter = '';
+                    });
+                }, 3000);
+            }
+            
+            function createPizzaConfetti() {
+                // Crear confeti de pizza y corazones
+                for (let i = 0; i < 40; i++) {
+                    setTimeout(() => {
+                        const emoji = document.createElement('div');
+                        emoji.style.position = 'fixed';
+                        emoji.style.left = Math.random() * 100 + 'vw';
+                        emoji.style.top = '-30px';
+                        emoji.style.fontSize = Math.random() * 30 + 20 + 'px';
+                        emoji.style.zIndex = '10000';
+                        emoji.style.pointerEvents = 'none';
+                        emoji.style.animation = `fallPizza ${Math.random() * 3 + 2}s linear forwards`;
+                        
+                        // Emojis de pizza y amor
+                        const emojis = ['🍕', '❤️', '🧀', '🍅', '🍕', '💕', '🍕', '✨'];
+                        emoji.innerHTML = emojis[Math.floor(Math.random() * emojis.length)];
+                        
+                        document.body.appendChild(emoji);
+                        
+                        setTimeout(() => {
+                            emoji.remove();
+                        }, 5000);
+                    }, i * 50);
+                }
+            }
+            
+            // Estilo para animación de caída
+            const styleSheet = document.createElement("style");
+            styleSheet.innerHTML = `
+                @keyframes fallPizza {
+                    0% {
+                        transform: translateY(0) rotate(0deg);
+                        opacity: 1;
+                    }
+                    100% {
+                        transform: translateY(100vh) rotate(720deg);
+                        opacity: 0;
+                    }
+                }
+            `;
+            document.head.appendChild(styleSheet);
+            
+            // Enfocar el input automáticamente cuando aparece
+            const observer = new MutationObserver(function(mutations) {
+                mutations.forEach(function(mutation) {
+                    if (!riddleArea.classList.contains('hidden')) {
+                        setTimeout(() => {
+                            riddleAnswer.focus();
+                        }, 500);
+                    }
+                });
+            });
+            
+            observer.observe(riddleArea, { attributes: true, attributeFilter: ['class'] });
+        });
+    </script>
+</body>
+</html>
